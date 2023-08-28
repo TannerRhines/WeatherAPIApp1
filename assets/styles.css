@@ -61,3 +61,13 @@ h1 {
     font-size: 1rem;
     font-weight: 500;
 }
+
+.current-weather .icon img{
+    max-width: 120px;
+    margin-top: -15px;
+}
+
+.current-weather .icon h6 {
+    margin-top: -10px;
+    text-transform: capitalize;
+}
