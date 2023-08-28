@@ -24,6 +24,20 @@ h1 {
     width: 550px;
 }
 
+.current-weather {
+    color: #fff;
+    display: flex;
+    border-radius: 5px;
+    padding: 20px 70px 20px 20px;
+    background: #5372F0;
+    justify-content: space-between;
+
+}
+
+.current-weather h2 {
+    font-size: 1.7rem;
+
+}
 
 .weather-input input {
     width: 100%;
@@ -38,4 +52,12 @@ h1 {
 
 .weather-data {
     width: 100%;
+}
+
+
+
+.weather-data h4 {
+    margin-top: 12px;
+    font-size: 1rem;
+    font-weight: 500;
 }
