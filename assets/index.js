@@ -3,6 +3,7 @@ const searchButton = document.querySelector(".search-btn");
 const API_KEY = "4fdabe75c801b0fdd1fbc854ba76e26a";  // API key from OpenWeather API
 
 
+const weatherCardsDiv = document.querySelector(".weather-cards");
 
 const createWeatherCard = (weatherItem) => {
     return `<li class="card">
