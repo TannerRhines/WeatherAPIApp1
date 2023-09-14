@@ -8,7 +8,7 @@ const API_KEY = "4fdabe75c801b0fdd1fbc854ba76e26a" // api key from openweather a
 
 
 const getWeatherDetails = (cityName, lat, lon) => {
-    const WEATHER_API_URL = ``;
+    const WEATHER_API_URL = `http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
 }
 
 const getCityLocation = () => {
