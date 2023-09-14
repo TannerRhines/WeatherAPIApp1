@@ -2,9 +2,12 @@ const cityInput = document.querySelector(".city-input");
 const searchButton = document.querySelector(".search-btn");
 const API_KEY = "4fdabe75c801b0fdd1fbc854ba76e26a";  // API key from OpenWeather API
 
+
+const currentWeatherDiv = document.querySelector(".current-weather");
 const weatherCardsDiv = document.querySelector(".weather-cards");
 
-const createWeatherCard = (weatherItem) => {
+const createWeatherCard = (cityName, weatherItem, index) => {
+
     const readableDate = new Date(weatherItem.dt_txt).toLocaleDateString('en-US', {
         weekday: 'long', 
         year: 'numeric', 
@@ -12,14 +15,35 @@ const createWeatherCard = (weatherItem) => {
         day: 'numeric'
     });
 
-    return `<li class="card">
-            <h3>${readableDate}</h3>
-            <img src="https://openweathermap.org/img/wn/${weatherItem.weather[0].icon}@2x.png" alt="weather-icon">
-            <h4>Temp: ${(weatherItem.main.temp - 273.15).toFixed(2)} °C </h4>
-            <h4>Wind: ${weatherItem.wind.speed} m/s</h4>
-            <h4>Humidity: ${weatherItem.main.humidity} %</h4>
-            </li>`;
-}
+    if(index === 0) {
+        return `
+        <div class="details">
+                        <h2> ${cityName} ${readableDate}</h2>
+                        <h4>Temperature: ${(weatherItem.main.temp - 273.15).toFixed(2)} °C </h4>
+                <h4>Wind: ${weatherItem.wind.speed} m/s</h4>
+                <h4>Humidity: ${weatherItem.main.humidity} %</h4>
+                    </div>
+                    <div class="icon">
+                    <img src="https://openweathermap.org/img/wn/${weatherItem.weather[0].icon}@2x.png" alt="weather-icon">
+                    <h4> moderate rain </h4>
+                    </div>
+                    
+                    `;
+    } else {
+
+        
+    
+        return `<li class="card">
+                <h3>${readableDate}</h3>
+                <img src="https://openweathermap.org/img/wn/${weatherItem.weather[0].icon}@2x.png" alt="weather-icon">
+                <h4>Temp: ${(weatherItem.main.temp - 273.15).toFixed(2)} °C </h4>
+                <h4>Wind: ${weatherItem.wind.speed} m/s</h4>
+                <h4>Humidity: ${weatherItem.main.humidity} %</h4>
+                </li>`;
+    }
+
+    }
+ 
 
 
 const getWeatherDetails = (cityName, lat, lon) => {
@@ -40,13 +64,18 @@ const getWeatherDetails = (cityName, lat, lon) => {
         });
 
         cityInput.value = "";
+        currentWeatherDiv.innerHTML = "";
         weatherCardsDiv.innerHTML = "";
 
-        fiveDaysForecast.forEach(weatherItem => {
-            weatherCardsDiv.insertAdjacentHTML("beforeend", createWeatherCard(weatherItem));
+        fiveDaysForecast.forEach((weatherItem, index) => {
+            if (index === 0) {
+                currentWeatherDiv.insertAdjacentHTML("beforeend", createWeatherCard(cityName, weatherItem, index));
+            } else {
+                weatherCardsDiv.insertAdjacentHTML("beforeend", createWeatherCard(cityName, weatherItem, index));
+            }
+            
         });
-    })
-    .catch(() => {
+    }).catch(() => {
         alert("Error occurred while fetching forecast");
     });
 };
