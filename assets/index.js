@@ -109,13 +109,16 @@ const getUserCoordinates = () => {
         position => {
             const { latitude, longitude } = position.coords;
             const REVERSE_GEOCODING_URL = `http://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`;
+                
+                
 
+            // get city name and coordinates
             fetch(REVERSE_GEOCODING_URL)
             .then(res => res.json())
             .then(data => {
-                if (!data.length) return alert(`No coordinates found for ${cityName}`);
-                const { name, lat, lon } = data[0];
-                getWeatherDetails(name, lat, lon);
+                
+                const { name } = data[0];
+                getWeatherDetails(name, latitude, longitude);
             })
             .catch(() => {
                 alert("Error occurred while fetching coordinates");
