@@ -6,9 +6,10 @@ const API_KEY = "4fdabe75c801b0fdd1fbc854ba76e26a"; // API key from OpenWeather 
 const currentWeatherDiv = document.querySelector(".current-weather");
 const weatherCardsDiv = document.querySelector(".weather-cards");
 
-const historyList = document.createElement('ul');
 
-document.body.appendChild(historyList);
+const historyList = document.querySelector('.history-list');
+
+
 
 // Function to create weather cards
 const createWeatherCard = (cityName, weatherItem, index) => {
@@ -61,7 +62,6 @@ const updateSearchHistory = (cityName) => {
     displaySearchHistory();
 };
 
-// Function to display search history
 const displaySearchHistory = () => {
     const history = JSON.parse(localStorage.getItem("searchHistory")) || [];
     historyList.innerHTML = '';
@@ -92,6 +92,7 @@ const getWeatherDetails = (cityName, lat, lon) => {
                 uniqueForecastDays.add(forecastDate);
                 fiveDaysForecast.push(forecast);
             }
+            updateSearchHistory(cityName);
         });
 
         // Clear previous weather data
