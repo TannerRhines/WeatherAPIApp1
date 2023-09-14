@@ -3,7 +3,7 @@
 ### Description
 A simple Weather Forecast application that allows you to get a 5-day weather forecast for any city in the world. You can either search for a city or use your current location. The app is built using vanilla JavaScript, HTML, and CSS, and it leverages the OpenWeatherMap API to fetch weather data.
 
-You can view the app here : 
+You can view the app here : https://tannerrhines.github.io/WeatherAPIApp1/
 
 ---
 
