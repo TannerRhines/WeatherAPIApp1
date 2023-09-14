@@ -4,32 +4,45 @@ const API_KEY = "4fdabe75c801b0fdd1fbc854ba76e26a";  // API key from OpenWeather
 
 
 
-
+const createWeatherCard = (weatherItem) => {
+    return `<li class="card">
+            <img src="https://openweathermap.org/img/wn/10d@2x.png" alt="weather-icon">
+            <h4>Temperature: 19.10 C</h4>
+            <h4>Wind: 4.311 M/S</h4>
+            <h4>Humidity: 79%</h4>
+            </li>`;
+}
 
 const getWeatherDetails = (cityName, lat, lon) => {
     const WEATHER_API_URL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
 
-
     fetch(WEATHER_API_URL)
     .then(res => res.json())
     .then(data => {
-       
+        const uniqueForecastDays = new Set();
+        const fiveDaysForecast = [];
 
-        const uniqueForecastDays = [];
-        const fiveDaysForecast = data.list.filter(forecast => {
+        // Populate the uniqueForecastDays Set and fiveDaysForecast array
+        data.list.forEach(forecast => {
+            const forecastDate = new Date(forecast.dt_txt).getDate(); 
 
-            const forecastDate = new Date(forecast.td_txt).getDate();
-            if(!uniqueForecastDays.includes(forecastDate)) {
-                return uniqueForecastDays.push(forecastDate);
+            if (!uniqueForecastDays.has(forecastDate) && uniqueForecastDays.size < 6) {
+                uniqueForecastDays.add(forecastDate);
+                fiveDaysForecast.push(forecast);
             }
+        });
 
-        })
         console.log(fiveDaysForecast);
+
+        fiveDaysForecast.forEach(weatherItem => {
+            createWeatherCard(weatherItem);
+        })
     })
     .catch(() => {
         alert("Error occurred while fetching forecast");
     });
 };
+
 
 const getCityLocation = () => {
     const cityName = cityInput.value.trim(); // Remove any extra spaces when user enters city
