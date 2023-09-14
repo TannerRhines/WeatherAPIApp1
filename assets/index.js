@@ -70,12 +70,11 @@ const displaySearchHistory = () => {
         const listItem = document.createElement('li');
         listItem.textContent = city;
         listItem.addEventListener('click', () => {
-            getCityLocation(city);  // Fetch 5-day forecast for this city
+            getCityLocation(city);
         });
         historyList.appendChild(listItem);
     });
 };
-
 
 
 
@@ -119,12 +118,21 @@ const getWeatherDetails = (cityName, lat, lon) => {
 };
 
 // Function to fetch city location
-const getCityLocation = () => {
-    const cityName = cityInput.value.trim();
+const getCityLocation = (cityNameFromHistory) => {
+    console.log("Entered getCityLocation", cityNameFromHistory); // Debugging line
+    let cityName;
+    
+    if (cityNameFromHistory) {
+        cityName = cityNameFromHistory;
+    } else {
+        cityName = cityInput.value.trim();
+    }
+    console.log("Using cityName:", cityName); // Debugging line
+
     if (!cityName) return;
 
     const GEOCODING_API_URL = `https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${API_KEY}`;
-
+    
     fetch(GEOCODING_API_URL)
     .then(res => res.json())
     .then(data => {
@@ -136,6 +144,7 @@ const getCityLocation = () => {
         alert("Error occurred while fetching coordinates");
     });
 };
+
 
 // Function to get user coordinates
 const getUserCoordinates = () => {
@@ -160,8 +169,17 @@ const getUserCoordinates = () => {
     );
 };
 
-searchButton.addEventListener("click", getCityLocation);
+searchButton.addEventListener("click", () => getCityLocation());
 locationButton.addEventListener("click", getUserCoordinates);
 
+listItem.addEventListener('click', () => {
+    getCityLocation(city);
+});
+
+
 displaySearchHistory();
+
+
+
+
 
