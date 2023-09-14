@@ -79,7 +79,7 @@ h1 {
 
 .weather-cards {
     display: flex;
-    gap: 20px;
+    gap: 10px;
 }
 
 .weather-cards .card {
@@ -118,5 +118,51 @@ h1 {
 @media (max-width: 576px) {
     .weather-cards .card {
         width: 100%;
+    }
+}
+
+
+
+/* Override for weather-cards to prevent wrapping and make it scrollable */
+.weather-cards {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 10px;
+}
+
+/* Make each card flexible */
+.weather-cards .card {
+    background: #6C757D;
+    color: #fff;
+    padding: 18px 16px;
+    border-radius: 5px;
+    background: #6C757D;
+    flex: 0 0 auto;  
+    min-width: calc(100% / 5); 
+}
+
+/* Media query to make cards more responsive */
+@media (max-width: 1200px) {
+    .weather-cards .card {
+        min-width: calc(100% / 4);
+    }
+}
+
+@media (max-width: 992px) {
+    .weather-cards .card {
+        min-width: calc(100% / 3);
+    }
+}
+
+@media (max-width: 768px) {
+    .weather-cards .card {
+        min-width: calc(100% / 2);
+    }
+}
+
+@media (max-width: 576px) {
+    .weather-cards .card {
+        min-width: 100%;
     }
 }
