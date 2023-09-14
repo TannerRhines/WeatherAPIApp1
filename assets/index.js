@@ -30,7 +30,7 @@ const createWeatherCard = (cityName, weatherItem, index) => {
         // HTML for main weather card
         return `
             <div class="details">
-                <h2>${cityName} ${readableDate}</h2>
+                <h2>${cityName} - ${readableDate}</h2>
                 <h4>Temperature: ${temp} °C</h4>
                 <h4>Wind: ${windSpeed} m/s</h4>
                 <h4>Humidity: ${humidity} %</h4>
