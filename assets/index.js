@@ -1,5 +1,7 @@
 const cityInput = document.querySelector(".city-input");
 const searchButton = document.querySelector(".search-btn");
+
+const locationButton = document.querySelector(".location-btn");
 const API_KEY = "4fdabe75c801b0fdd1fbc854ba76e26a";  // API key from OpenWeather API
 
 
@@ -101,4 +103,19 @@ const getCityLocation = () => {
     });
 };
 
+
+const getUserCoordinates = () => {
+    navigator.geolocation.getCurrentPosition(
+        position => {
+            console.log(position);
+
+        },
+        error => {
+            console.log(error);
+        }
+    )
+}
+
 searchButton.addEventListener("click", getCityLocation);
+
+locationButton.addEventListener("click", getUserCoordinates);
