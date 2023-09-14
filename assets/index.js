@@ -62,6 +62,7 @@ const updateSearchHistory = (cityName) => {
     displaySearchHistory();
 };
 
+// Function to display search history
 const displaySearchHistory = () => {
     const history = JSON.parse(localStorage.getItem("searchHistory")) || [];
     historyList.innerHTML = '';
@@ -69,11 +70,13 @@ const displaySearchHistory = () => {
         const listItem = document.createElement('li');
         listItem.textContent = city;
         listItem.addEventListener('click', () => {
-            getCityLocation(city);
+            getCityLocation(city);  // Fetch 5-day forecast for this city
         });
         historyList.appendChild(listItem);
     });
 };
+
+
 
 
 // Function to fetch weather details
