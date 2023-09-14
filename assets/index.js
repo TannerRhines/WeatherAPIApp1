@@ -12,12 +12,15 @@ const getCityLocation = () => {
 
     if (!cityName) return;
 
-    const GEOCODING_API_URL = `http://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=5&appid=${API_KEY}
+    const GEOCODING_API_URL = `http://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=5&appid=${API_KEY}`
 
-    
-}`;
-    console.log(cityName);
-}
+    fetch(GEOCODING_API_URL).then(res => res.json()).then(data => {
+        console.log(data)
+    }).catch(() => {
+        alert("error occured when fetching coordinates");
+    });
+};
+
 
 
 searchButton.addEventListener("click", getCityLocation);
