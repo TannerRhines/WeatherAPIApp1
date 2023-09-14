@@ -31,6 +31,9 @@ const getWeatherDetails = (cityName, lat, lon) => {
             }
         });
 
+        cityInput.value = "";
+        weatherCardsDiv.innerHTML = "";
+
         fiveDaysForecast.forEach(weatherItem => {
             weatherCardsDiv.insertAdjacentHTML("beforeend", createWeatherCard(weatherItem));
         });
