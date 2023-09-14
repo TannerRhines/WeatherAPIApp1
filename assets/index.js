@@ -107,7 +107,8 @@ const getCityLocation = () => {
 const getUserCoordinates = () => {
     navigator.geolocation.getCurrentPosition(
         position => {
-            console.log(position);
+            const { latitude, longitude } = position.coords;
+            const REVERSE_GEOCODING_URL = ``;
 
         },
         error => {
