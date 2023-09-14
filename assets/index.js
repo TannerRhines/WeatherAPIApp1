@@ -15,7 +15,7 @@ const createWeatherCard = (cityName, weatherItem, index) => {
         day: 'numeric'
     });
 
-    if(index === 0) {
+    if(index === 0) { //html for main weather card
         return `
         <div class="details">
                         <h2> ${cityName} ${readableDate}</h2>
@@ -25,11 +25,11 @@ const createWeatherCard = (cityName, weatherItem, index) => {
                     </div>
                     <div class="icon">
                     <img src="https://openweathermap.org/img/wn/${weatherItem.weather[0].icon}@2x.png" alt="weather-icon">
-                    <h4> moderate rain </h4>
+                    <h4> ${weatherItem.weather[0].description} </h4>
                     </div>
                     
                     `;
-    } else {
+    } else { //html for five day forecast card
 
         
     
@@ -57,16 +57,20 @@ const getWeatherDetails = (cityName, lat, lon) => {
 
         data.list.forEach(forecast => {
             const forecastDate = new Date(forecast.dt_txt).getDate();
-            if (!uniqueForecastDays.has(forecastDate) && uniqueForecastDays.size < 5) {
+            if (!uniqueForecastDays.has(forecastDate) && uniqueForecastDays.size < 6) {
                 uniqueForecastDays.add(forecastDate);
                 fiveDaysForecast.push(forecast);
             }
         });
 
+        // clear previous weather data
+
         cityInput.value = "";
         currentWeatherDiv.innerHTML = "";
         weatherCardsDiv.innerHTML = "";
 
+
+        // create card and adds to the DOM
         fiveDaysForecast.forEach((weatherItem, index) => {
             if (index === 0) {
                 currentWeatherDiv.insertAdjacentHTML("beforeend", createWeatherCard(cityName, weatherItem, index));
