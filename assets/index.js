@@ -6,6 +6,10 @@ const API_KEY = "4fdabe75c801b0fdd1fbc854ba76e26a"; // API key from OpenWeather 
 const currentWeatherDiv = document.querySelector(".current-weather");
 const weatherCardsDiv = document.querySelector(".weather-cards");
 
+const historyList = document.createElement('ul');
+
+document.body.appendChild(historyList);
+
 // Function to create weather cards
 const createWeatherCard = (cityName, weatherItem, index) => {
     const readableDate = new Date(weatherItem.dt_txt).toLocaleDateString('en-US', {
@@ -46,6 +50,31 @@ const createWeatherCard = (cityName, weatherItem, index) => {
             </li>`;
     }
 };
+
+
+const updateSearchHistory = (cityName) => {
+    let history = JSON.parse(localStorage.getItem("searchHistory")) || [];
+    if (!history.includes(cityName)) {
+        history.push(cityName);
+        localStorage.setItem("searchHistory", JSON.stringify(history));
+    }
+    displaySearchHistory();
+};
+
+// Function to display search history
+const displaySearchHistory = () => {
+    const history = JSON.parse(localStorage.getItem("searchHistory")) || [];
+    historyList.innerHTML = '';
+    history.forEach(city => {
+        const listItem = document.createElement('li');
+        listItem.textContent = city;
+        listItem.addEventListener('click', () => {
+            getCityLocation(city);
+        });
+        historyList.appendChild(listItem);
+    });
+};
+
 
 // Function to fetch weather details
 const getWeatherDetails = (cityName, lat, lon) => {
@@ -129,3 +158,6 @@ const getUserCoordinates = () => {
 
 searchButton.addEventListener("click", getCityLocation);
 locationButton.addEventListener("click", getUserCoordinates);
+
+displaySearchHistory();
+
