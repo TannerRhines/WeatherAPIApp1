@@ -1,17 +1,39 @@
 const cityInput = document.querySelector(".city-input");
 const searchButton = document.querySelector(".search-btn");
 const locationButton = document.querySelector(".location-btn");
-const API_KEY = "4fdabe75c801b0fdd1fbc854ba76e26a"; // API key from OpenWeather API
+const API_KEY = "4fdabe75c801b0fdd1fbc854ba76e26a";
 
 const currentWeatherDiv = document.querySelector(".current-weather");
 const weatherCardsDiv = document.querySelector(".weather-cards");
-
-
 const historyList = document.querySelector('.history-list');
 
 
+// updated city history in local storage
+const updateCityHistory = (cityName) => {
+    let cityHistory = JSON.parse(localStorage.getItem('cityHistory')) || [];
+    if (!cityHistory.includes(cityName)) {
+        cityHistory.push(cityName);
+        localStorage.setItem('cityHistory', JSON.stringify(cityHistory));
+    }
+    displayHistory();
+};
 
-// Function to create weather cards
+
+// gets city names out of local storage
+const displayHistory = () => {
+    historyList.innerHTML = '';  // Clear old history
+    let cityHistory = JSON.parse(localStorage.getItem('cityHistory')) || [];
+
+    cityHistory.forEach(city => {
+        const historyItem = document.createElement('li');
+        historyItem.textContent = city;
+        historyItem.addEventListener('click', () => getCityLocation(city));
+        historyList.appendChild(historyItem);
+    });
+};
+
+
+// creates the weather cards that will be displayed with a city 
 const createWeatherCard = (cityName, weatherItem, index) => {
     const readableDate = new Date(weatherItem.dt_txt).toLocaleDateString('en-US', {
         weekday: 'long',
@@ -27,10 +49,9 @@ const createWeatherCard = (cityName, weatherItem, index) => {
     const description = weatherItem.weather[0].description;
 
     if (index === 0) {
-        // HTML for main weather card
         return `
             <div class="details">
-                <h2>${cityName} - ${readableDate}</h2>
+                <h2>${cityName} ${readableDate}</h2>
                 <h4>Temperature: ${temp} °C</h4>
                 <h4>Wind: ${windSpeed} m/s</h4>
                 <h4>Humidity: ${humidity} %</h4>
@@ -40,7 +61,6 @@ const createWeatherCard = (cityName, weatherItem, index) => {
                 <h4>${description}</h4>
             </div>`;
     } else {
-        // HTML for five-day forecast card
         return `
             <li class="card">
                 <h3>${readableDate}</h3>
@@ -53,115 +73,78 @@ const createWeatherCard = (cityName, weatherItem, index) => {
 };
 
 
-const updateSearchHistory = (cityName) => {
-    let history = JSON.parse(localStorage.getItem("searchHistory")) || [];
-    if (!history.includes(cityName)) {
-        history.push(cityName);
-        localStorage.setItem("searchHistory", JSON.stringify(history));
-    }
-    displaySearchHistory();
-};
-
-// Function to display search history
-const displaySearchHistory = () => {
-    const history = JSON.parse(localStorage.getItem("searchHistory")) || [];
-    historyList.innerHTML = '';
-    history.forEach(city => {
-        const listItem = document.createElement('li');
-        listItem.textContent = city;
-        listItem.addEventListener('click', () => {
-            getCityLocation(city);
-        });
-        historyList.appendChild(listItem);
-    });
-};
-
-
-
-// Function to fetch weather details
+// get the 5 day forecast details
 const getWeatherDetails = (cityName, lat, lon) => {
     const WEATHER_API_URL = `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&lat=${lat}&lon=${lon}&appid=${API_KEY}`;
-
     fetch(WEATHER_API_URL)
-    .then(res => res.json())
-    .then(data => {
-        const uniqueForecastDays = new Set();
-        const fiveDaysForecast = [];
+        .then(res => res.json())
+        .then(data => {
+            const uniqueForecastDays = new Set();
+            const fiveDaysForecast = [];
 
-        data.list.forEach(forecast => {
-            const forecastDate = new Date(forecast.dt_txt).getDate();
-            if (!uniqueForecastDays.has(forecastDate) && uniqueForecastDays.size < 6) {
-                uniqueForecastDays.add(forecastDate);
-                fiveDaysForecast.push(forecast);
-            }
-            updateSearchHistory(cityName);
+            data.list.forEach(forecast => {
+                const forecastDate = new Date(forecast.dt_txt).getDate();
+                if (!uniqueForecastDays.has(forecastDate) && uniqueForecastDays.size < 6) {
+                    uniqueForecastDays.add(forecastDate);
+                    fiveDaysForecast.push(forecast);
+                }
+            });
+
+            updateCityHistory(cityName);
+
+            currentWeatherDiv.innerHTML = "";
+            weatherCardsDiv.innerHTML = "";
+
+            fiveDaysForecast.forEach((weatherItem, index) => {
+                const cardHTML = createWeatherCard(cityName, weatherItem, index);
+                if (index === 0) {
+                    currentWeatherDiv.insertAdjacentHTML("beforeend", cardHTML);
+                } else {
+                    weatherCardsDiv.insertAdjacentHTML("beforeend", cardHTML);
+                }
+            });
+        })
+        .catch(() => {
+            alert("Error occurred while fetching forecast");
         });
-
-        // Clear previous weather data
-        cityInput.value = "";
-        currentWeatherDiv.innerHTML = "";
-        weatherCardsDiv.innerHTML = "";
-
-        // Create card and add it to the DOM
-        fiveDaysForecast.forEach((weatherItem, index) => {
-            const cardHTML = createWeatherCard(cityName, weatherItem, index);
-            if (index === 0) {
-                currentWeatherDiv.insertAdjacentHTML("beforeend", cardHTML);
-            } else {
-                weatherCardsDiv.insertAdjacentHTML("beforeend", cardHTML);
-            }
-        });
-    })
-    .catch(() => {
-        alert("Error occurred while fetching forecast");
-    });
 };
 
-// Function to fetch city location
-const getCityLocation = (cityNameFromHistory) => {
-    console.log("Entered getCityLocation", cityNameFromHistory); // Debugging line
-    let cityName;
-    
-    if (cityNameFromHistory) {
-        cityName = cityNameFromHistory;
-    } else {
-        cityName = cityInput.value.trim();
-    }
-    console.log("Using cityName:", cityName); // Debugging line
 
+// get city location
+const getCityLocation = (cityNameInput) => {
+    const cityName = cityNameInput || cityInput.value.trim();
     if (!cityName) return;
 
     const GEOCODING_API_URL = `https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${API_KEY}`;
-    
     fetch(GEOCODING_API_URL)
-    .then(res => res.json())
-    .then(data => {
-        if (!data.length) return alert(`No coordinates found for ${cityName}`);
-        const { name, lat, lon } = data[0];
-        getWeatherDetails(name, lat, lon);
-    })
-    .catch(() => {
-        alert("Error occurred while fetching coordinates");
-    });
+        .then(res => res.json())
+        .then(data => {
+            if (!data.length) return alert(`No coordinates found for ${cityName}`);
+            const { name, lat, lon } = data[0];
+            getWeatherDetails(name, lat, lon);
+        })
+        .catch(() => {
+            alert("Error occurred while fetching coordinates");
+        });
 };
 
 
-// Function to get user coordinates
+// get user coordinates
 const getUserCoordinates = () => {
     navigator.geolocation.getCurrentPosition(
         position => {
             const { latitude, longitude } = position.coords;
-            const REVERSE_GEOCODING_URL = `http://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`;
+            const REVERSE_GEOCODING_URL = `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`;
 
             fetch(REVERSE_GEOCODING_URL)
-            .then(res => res.json())
-            .then(data => {
-                const { name } = data[0];
-                getWeatherDetails(name, latitude, longitude);
-            })
-            .catch(() => {
-                alert("Error occurred while fetching coordinates");
-            });
+                .then(res => res.json())
+                .then(data => {
+                    const { name } = data[0];
+                    getWeatherDetails(name, latitude, longitude);
+                })
+                .catch(() => {
+                    alert("Error occurred while fetching coordinates");
+                });
         },
         error => {
             console.log(error);
@@ -172,14 +155,5 @@ const getUserCoordinates = () => {
 searchButton.addEventListener("click", () => getCityLocation());
 locationButton.addEventListener("click", getUserCoordinates);
 
-listItem.addEventListener('click', () => {
-    getCityLocation(city);
-});
-
-
-displaySearchHistory();
-
-
-
-
-
+// display the search history
+displayHistory();
